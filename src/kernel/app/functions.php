@@ -2,8 +2,10 @@
 /**
  * Custom Global functions
  */
+define('DS', DIRECTORY_SEPARATOR);
+
 function __env() {
-    $file = getcwd() . '/.env';
+    $file = finder('.env',  getcwd());
     if (!file_exists($file)) die('env not loaded.');
     (new \Symfony\Component\Dotenv\Dotenv)->load($file);
 }
@@ -191,17 +193,20 @@ function is_const_defined(array $const_names) {
 function find_file(string $file, string $path = __DIR__):array {
     $dir_exceptions = [".", "..", "vendor"];
     $dirs = $result = [];
+
     $dirs = (@scandir($path)) ? @scandir($path) : [];
 
     foreach ($dirs as $k => $dir) {
         if (in_array($dir, $dir_exceptions)) continue; 
 
-        $file_path = realpath($path) . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . $file;
-        
+        $file_path = realpath($path) . DS . $dir . DS . $file;
+
         if (file_exists($file_path)) {
             $result['files'][] = $file_path;
+        } else if (file_exists(realpath($path) . DS . $file) && !is_dir(realpath($path) . DS . $file)) {
+            if (!@in_array(realpath($path) . DS . $file, @$result['files'])) $result['files'][] = realpath($path) . DS . $file;
         } else {
-            $return = find_file($file, $path . DIRECTORY_SEPARATOR . $dir);
+            $return = find_file($file, $path . DS . $dir);
             if (@$return) $result['files'] = $return['files'];
         }
     }
@@ -211,7 +216,6 @@ function find_file(string $file, string $path = __DIR__):array {
 
 function finder (string $file, string $path = __DIR__) {
     $result = find_file($file, $path);
-    
     if (@$result['files']) {
         if (count($result['files']) == 1) {
             return $result['files'][0];
