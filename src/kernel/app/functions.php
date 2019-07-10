@@ -188,30 +188,28 @@ function is_const_defined(array $const_names) {
 * File finder in php
 * @return All occurrence of the filename, starting from the base dir.
 */
-function find_file(string $file, string $path = __DIR__) {
-    $file_ext = current(explode(".", $file)); 
-    $dirs = $found = array();
+function find_file(string $file, string $path = __DIR__):array {
+    $dir_exceptions = [".", "..", "vendor"];
+    $dirs = $result = [];
     $dirs = (@scandir($path)) ? @scandir($path) : [];
 
     foreach ($dirs as $k => $dir) {
-        if ($dir == '.' || $dir == '..' || $dir == 'vendor') continue; 
+        if (in_array($dir, $dir_exceptions)) continue; 
 
         $file_path = realpath($path) . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . $file;
+        
         if (file_exists($file_path)) {
-            $found['files'][] = $file_path;
+            $result['files'][] = $file_path;
         } else {
             $return = find_file($file, $path . DIRECTORY_SEPARATOR . $dir);
-            if (@$return) {
-                $found['files'] = $return['files'];
-            }
+            if (@$return) $result['files'] = $return['files'];
         }
     }
 
-
-    return $found;
+    return $result;
 }
 
-function file_finder (string $file, string $path = __DIR__) {
+function finder (string $file, string $path = __DIR__) {
     $result = find_file($file, $path);
     
     if (@$result['files']) {
