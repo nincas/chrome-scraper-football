@@ -1,0 +1,31 @@
+{
+    "name": "xml/scraper",
+    "description": "XML Scraper v2",
+    "require": {
+        "php": "^7.0",
+        "chrome-php/chrome": "^0.6.0",
+        "illuminate/database": "5.*",
+        "illuminate/events": "5.*",
+        "symfony/dotenv": "3.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Scraper\\": "src",
+            "Scraper\\Build\\Controller\\": "src/build/controller",
+            "Scraper\\Build\\Models\\": "src/build/models",
+            "Scraper\\Build\\Patterns\\": "src/build/patterns",
+            "Scraper\\Kernel\\App\\": "src/kernel/app",
+            "Scraper\\Kernel\\Crawler\\": "src/kernel/crawler",
+            "Scraper\\Kernel\\Database\\": "src/kernel/database",
+            "Scraper\\Kernel\\Interfaces\\": "src/kernel/interfaces"
+        },
+        "files": ["src/kernel/app/functions.php"]
+    },
+    "require-dev": {
+        "symfony/var-dumper": "3.*"
+    },
+    "scripts": {
+        "post-install-cmd": "composer dump-autoload -o --apcu",
+        "post-update-cmd": "composer dump-autoload -o --apcu"
+    }
+}

@@ -1,0 +1,16 @@
+<?php
+
+// Start autoloading
+require_once "vendor/autoload.php";
+
+// Load environment variables
+__env();
+$file = file_finder('constants.php', __DIR__);
+
+// Define constants
+if (!$file) die('File couldnt found.');
+require_once $file;
+
+// Start scraper
+$scraper = new \Scraper\Kernel\App\Loader;
+$scraper->boot();
