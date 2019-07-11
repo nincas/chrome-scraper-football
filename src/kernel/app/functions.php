@@ -4,8 +4,9 @@
  */
 define('DS', DIRECTORY_SEPARATOR);
 
+
 function __env() {
-    $file = finder('.env',  getcwd());
+    $file = finder('.env',  dirname(dirname(dirname(__DIR__))) . '\\');
     if (!file_exists($file)) die('env not loaded.');
     (new \Symfony\Component\Dotenv\Dotenv)->load($file);
 }
@@ -13,14 +14,9 @@ function __env() {
 
 function saveToFile($data, $file) {
     try {
-        $handle = fopen($file, 'w');
+        $handle = fopen($file, 'w') or die("Cant open/create the $file");
         fwrite($handle, $data);
         fclose($handle);
-        // $saved = file_put_contents($file, $data);
-        // if (!$saved) {
-        //     throw new \Exception('File cannot be saved.');
-        // }
-
         return true;
     } catch (\Exception $e) {
         echo $e->getMessage() . PHP_EOL;
@@ -29,6 +25,13 @@ function saveToFile($data, $file) {
 }
 
 
+/**
+ * @return Array of parameters
+ * @example php scrape event_id=123 # 
+ * param = [
+ *    'event_id' => 123
+ * ]
+ */
 function params($limit):array {
     $params = $_SERVER['argv'];
     unset($params[0]); // Remove first param
@@ -37,10 +40,9 @@ function params($limit):array {
     
     if (count($params) > $limit) die('Param exceeded to limit.');
     foreach ($params as $key => $param) {
-        
+        // str_contains global helper func of illuminate
         if (str_contains($param, '=') > 0) {
             $param = explode("=", $param);
-            
             if (!in_array($param[0], $allowed_param) && $param != 'scrape') die("Param '$param[0]' not allowed.");
             if (!isset($param_list[$param[0]])) $param_list[$param[0]] = $param[1]; 
         } else {
@@ -78,6 +80,9 @@ function db_conf():array {
     ];
 }
 
+/**
+ * @return Array of options
+ */
 function getOptions() {
     $array_opts = array();
     $opts = explode(",", getenv('OPTIONS'));
@@ -101,7 +106,9 @@ function getOptions() {
     return $array_opts;
 }
 
-// https://stackoverflow.com/questions/8272723/test-if-string-could-be-boolean-php
+/**
+ * @link https://stackoverflow.com/questions/8272723/test-if-string-could-be-boolean-php
+ */
 function is_boolean($string) {
     $string = strtolower($string);
     return (in_array($string, array("true", "false", "1", "0", "yes", "no"), true));

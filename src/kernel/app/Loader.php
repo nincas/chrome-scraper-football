@@ -4,7 +4,9 @@
 namespace Scraper\Kernel\App;
 
 use Scraper\Kernel\Database\Database;
-
+/**
+ * Class Loader
+ */
 class Loader {
 
     private $db;
@@ -15,7 +17,8 @@ class Loader {
         $this->db = new Database;
         $this->db->add(db_conf(), 'default');
         $this->db = $this->db->load();
-        $this->manager = $this->db->instance(); // Get Manager:class instance
+        // Get Manager:class instance
+        $this->manager = $this->db->instance(); 
 
         echo "> Scraping.." . PHP_EOL;
     }
@@ -31,12 +34,12 @@ class Loader {
         $params = params(PARAM_LIMIT);
         
         if (!isset($params[0])) die();
-        $class = 'Scraper\\Build\\Controller\\' . studly_case($params[0]);
+        $class = BASE_NS . studly_case($params[0]);
         /**
          * Check if class exists
          */
         if (!class_exists($class)) {
-            die("Class '$class::class' does not exists");
+            die("Class '$class::class' does not exists" . PHP_EOL);
         }
 
         /**

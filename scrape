@@ -5,7 +5,7 @@ require_once "vendor/autoload.php";
 
 // Load environment variables
 __env();
-$file = finder('constants.php', getcwd());
+$file = finder('constants.php', dirname(__FILE__));
 
 // Define constants
 if (!$file) die('File couldnt found.');
