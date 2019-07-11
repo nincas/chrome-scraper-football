@@ -230,7 +230,10 @@ function finder (string $file, string $path = __DIR__) {
     }
 }
 
-
+/**
+ * @param $objClass Object Class obj
+ * @param $function Method name
+ */
 function create_callable($objClass, $function) {
     return function () use ($objClass, $function) {
         $args = func_get_args();
@@ -253,9 +256,11 @@ function error($message, $level = 1) {
     try {
         throw new \Exception($message);
     } catch (\Exception $e) {
+        echo NL;
         echo ERR_LEVELS[$level] . $e->getMessage() . NL;
         echo "Line: $line" . NL;
         echo "File: $file" . NL;
+        echo NL;
         exit;
     }
 }
