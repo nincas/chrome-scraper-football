@@ -19,8 +19,7 @@ function saveToFile($data, $file) {
         fclose($handle);
         return true;
     } catch (\Exception $e) {
-        echo $e->getMessage() . PHP_EOL;
-        return false;
+        dlog($e->getMessage());
     }
 }
 
@@ -239,11 +238,24 @@ function create_callable($objClass, $function) {
     };
 }
 
-function dlog($message) {
+
+/**
+ * Custom error logging function w/ native php functions
+ * @link https://www.php.net/manual/en/function.debug-backtrace.php
+ * @param $message String
+ * @param $level Int
+ */
+function dlog($message, $level = 1) {
+    $db = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+    $file = $db[0]['file'];
+    $line = $db[0]['line'];
+
     try {
         throw new \Exception($message);
     } catch (\Exception $e) {
-        echo 'Error: ' . $e->getMessage() . NL;
+        echo ERR_LEVELS[$level] . $e->getMessage() . NL;
+        echo "Line: $line" . NL;
+        echo "File: $file" . NL;
         exit;
     }
 }

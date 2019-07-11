@@ -42,7 +42,7 @@ class Crawler implements CrawlerInterface {
      * @return String
      */
     public function crawl(string $file):string {
-        echo "> crawling [$this->url]" . PHP_EOL; 
+        echo "> crawling [$this->url]" . NL; 
         
         $start_time = time();
         
@@ -71,7 +71,7 @@ class Crawler implements CrawlerInterface {
         // Close browser
         $browser->close();
         
-        echo '> crawled in ' . date('i:s', time() - $start_time) . ' sec' . PHP_EOL;
+        echo '> crawled in ' . date('i:s', time() - $start_time) . ' sec' . NL;
 
         return $html;
     }

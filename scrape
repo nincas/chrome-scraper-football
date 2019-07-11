@@ -8,7 +8,7 @@ __env();
 $file = finder('constants.php', dirname(__FILE__));
 
 // Define constants
-if (!$file) dlog('File couldnt found.');
+if (!file_exists($file)) dlog('File couldnt found.');
 require_once $file;
 
 // Start scraper

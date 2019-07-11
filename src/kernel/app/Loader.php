@@ -20,7 +20,6 @@ class Loader {
         // Get Manager:class instance
         $this->manager = $this->db->instance(); 
 
-        echo "> Scraping.." . PHP_EOL;
     }
 
 
@@ -33,15 +32,16 @@ class Loader {
         
         $params = params(PARAM_LIMIT);
         
-        if (!isset($params[0])) die();
+        if (!isset($params[0])) dlog("No inputted parameter.", 0);
         $class = BASE_NS . studly_case($params[0]);
         /**
          * Check if class exists
          */
         if (!class_exists($class)) {
-            dlog("Class '$class::class' does not exists" . NL);
+            dlog("Class '$class::class' does not exists");
         }
 
+        echo "> Scraping.." . PHP_EOL;
         /**
          * Call $class::class
          */
