@@ -7,19 +7,19 @@ define('DS', DIRECTORY_SEPARATOR);
 
 function __env() {
     $file = finder('.env',  dirname(dirname(dirname(__DIR__))) . '/');
-    if (!file_exists($file)) dlog('env not loaded.');
+    if (!file_exists($file)) error('env not loaded.');
     (new \Symfony\Component\Dotenv\Dotenv)->load($file);
 }
 
 
 function saveToFile($data, $file) {
     try {
-        $handle = fopen($file, 'w') or dlog("Cant open/create the $file");
+        $handle = fopen($file, 'w') or error("Cant open/create the $file");
         fwrite($handle, $data);
         fclose($handle);
         return true;
     } catch (\Exception $e) {
-        dlog($e->getMessage());
+        error($e->getMessage());
     }
 }
 
@@ -34,15 +34,15 @@ function params($limit):array {
     $param_list = [];
     $allowed_param = explode("|", getenv('ALLOWED_PARAM'));
     
-    if (count($params) > $limit) dlog('Param exceeded to limit.');
+    if (count($params) > $limit) error('Param exceeded to limit.');
     foreach ($params as $key => $param) {
         // str_contains global helper func of illuminate
         if (str_contains($param, '=') > 0) {
             $param = explode("=", $param);
-            if (!in_array($param[0], $allowed_param) && $param != 'scrape') dlog("Param '$param[0]' not allowed.");
+            if (!in_array($param[0], $allowed_param) && $param != 'scrape') error("Param '$param[0]' not allowed.");
             if (!isset($param_list[$param[0]])) $param_list[$param[0]] = $param[1]; 
         } else {
-            if (!in_array($param, $allowed_param) && $param != 'scrape') dlog("Param '$param' not allowed.");
+            if (!in_array($param, $allowed_param) && $param != 'scrape') error("Param '$param' not allowed.");
             array_push($param_list, $param);
         }
     }
@@ -184,7 +184,7 @@ function define_const(array $const) {
 */
 function is_const_defined(array $const_names) {
     foreach ($const_names as $const_name) {
-        defined($const_name) or dlog("Constant '$const_name' not defined.");
+        defined($const_name) or error("Constant '$const_name' not defined.");
     }
 }
 
@@ -245,7 +245,7 @@ function create_callable($objClass, $function) {
  * @param $message String
  * @param $level Int
  */
-function dlog($message, $level = 1) {
+function error($message, $level = 1) {
     $db = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
     $file = $db[0]['file'];
     $line = $db[0]['line'];

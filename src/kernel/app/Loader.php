@@ -32,13 +32,13 @@ class Loader {
         
         $params = params(PARAM_LIMIT);
         
-        if (!isset($params[0])) dlog("No inputted parameter.", 0);
+        if (!isset($params[0])) error("No inputted parameter.", 0);
         $class = BASE_NS . studly_case($params[0]);
         /**
          * Check if class exists
          */
         if (!class_exists($class)) {
-            dlog("Class '$class::class' does not exists");
+            error("Class '$class::class' does not exists");
         }
 
         echo "> Scraping.." . PHP_EOL;
