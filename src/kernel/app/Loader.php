@@ -39,13 +39,13 @@ class Loader {
          * Check if class exists
          */
         if (!class_exists($class)) {
-            die("Class '$class::class' does not exists" . PHP_EOL);
+            dlog("Class '$class::class' does not exists" . NL);
         }
 
         /**
          * Call $class::class
          */
-        $callable = new  $class($this->db, $params);
+        (new $class($this->db, $params));
 
         /**
          * Kill all running process of chrome

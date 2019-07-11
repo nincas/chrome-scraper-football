@@ -47,6 +47,7 @@ class Livescore implements Controller {
 
         
         $matches = $this->getMatches();
+        echo "> MatchTotal: " . count($matches) . NL;
         /**
          * Loop return matches
          */
@@ -78,7 +79,8 @@ class Livescore implements Controller {
     protected function getMatches() {
         if ($this->event_ids) {
             // If there is parameter event_id
-            $matches = $this->database->instance()->table('event as e')
+            $matches = $this->database->instance()
+                                ->table('event as e')
                                 ->select('fs.eventFK', 'fs.flashscore_link', 'e.status_type')
                                 ->leftJoin('flashscore_source as fs', 'fs.eventFK', 'e.id')
                                 ->whereIn('e.id', explode(",", $this->event_ids))
@@ -128,7 +130,7 @@ class Livescore implements Controller {
     /**
      * @func call match statistics func
      */
-    protected function matchStatistics($html, $file) {
+    public function matchStatistics($html, $file) {
         /**
          * Parse html file to data
          */

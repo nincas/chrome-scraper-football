@@ -2,6 +2,11 @@
 
 namespace Scraper\Kernel\Crawler;
 
+/**
+* chrome-php
+* @link https://github.com/chrome-php/headless-chromium-php
+*/
+
 use Scraper\Kernel\Interfaces\Crawler as CrawlerInterface;
 use HeadlessChromium\BrowserFactory;
 /**
