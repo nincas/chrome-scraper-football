@@ -7,4 +7,5 @@ interface Database {
     public function load();
     public function query($sql = '');
     public function instance();
+    public function table($table_name = '');
 }

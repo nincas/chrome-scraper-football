@@ -2,14 +2,10 @@
 
 namespace Scraper\Kernel\Crawler;
 
-/**
-* chrome-php
-* @link https://github.com/chrome-php/headless-chromium-php
-*/
-
 use Scraper\Kernel\Interfaces\Crawler as CrawlerInterface;
 use HeadlessChromium\BrowserFactory;
 /**
+ * @source Github
  * @link https://github.com/chrome-php/headless-chromium-php
  */
 class Crawler implements CrawlerInterface {
@@ -26,9 +22,7 @@ class Crawler implements CrawlerInterface {
      * Configs
      */
     public function __construct(string $url) {
-        if (empty($url)) {
-            die('Parameter passed null.');
-        }
+        if (empty($url)) error('Parameter passed null.', 2);
 
         $this->url = $url;
         $this->browserFactory = new BrowserFactory();
@@ -40,6 +34,7 @@ class Crawler implements CrawlerInterface {
     /**
      * Start Crawling
      * @return String
+     * @param String $file
      */
     public function crawl(string $file):string {
         echo "> crawling [$this->url]" . NL; 
@@ -56,7 +51,7 @@ class Crawler implements CrawlerInterface {
         $page->navigate($this->url)->waitForNavigation('networkIdle', TIMEOUT_SEC);
 
         // Evaluate html
-        $evaluate = $page->evaluate('document.documentElement.outerHTML');
+        $evaluate = $page->evaluate('document.documentElement.outerHTML')->waitForResponse(TIMEOUT_SEC);
 
         // Get return value
         $html = $evaluate->getReturnValue();

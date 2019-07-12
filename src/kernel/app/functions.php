@@ -25,10 +25,13 @@ function saveToFile($data, $file) {
 
 
 /**
+ * Get all parameters set
+ * 
  * @return Array of parameters
  * @example key => value
+ * @param $limit
  */
-function params(int $limit):array {
+function params(int  $limit):array {
     $params = $_SERVER['argv'];
     unset($params[0]); // Remove first param
     $param_list = [];
@@ -110,46 +113,11 @@ function is_boolean($string) {
     return (in_array($string, array("true", "false", "1", "0", "yes", "no"), true));
 }
 
-function live_query():string {
-    return "SELECT fs.`eventFK`, fs.`flashscore_link`, e.status_type
-    FROM `event` e
-    LEFT JOIN flashscore_source fs ON fs.`eventFK` = e.`id`
-    WHERE e.`status_type` IN ('inprogress', 'delayed') AND fs.`flashscore_link` != ''
-    UNION ALL
-    SELECT fs.`eventFK`, fs.`flashscore_link`, e.status_type
-    FROM `event` e
-    LEFT JOIN flashscore_source fs ON fs.`eventFK` = e.`id`
-    LEFT JOIN event_runtime er ON e.id = er.eventFK
-    WHERE  fs.`flashscore_link` != ''
-    AND e.status_type = 'finished'
-    AND NOW() BETWEEN DATE_ADD(e.startdate, INTERVAL er.running_time MINUTE)
-        AND DATE_ADD(e.startdate, INTERVAL (er.running_time+60) MINUTE)";
-}
-
-
-function _str_slug($title, $separator = '-', $language = 'en') {
-            // $title = $language ? static::ascii($title, $language) : $title;
-
-        // Convert all dashes/underscores into separator
-        $flip = $separator === '-' ? '_' : '-';
-
-        $title = preg_replace('!['.preg_quote($flip).']+!u', $separator, $title);
-
-        // Replace @ with the word 'at'
-        $title = str_replace('@', $separator.'at'.$separator, $title);
-
-        // Remove all characters that are not the separator, letters, numbers, or whitespace.
-        $title = preg_replace('![^'.preg_quote($separator).'\pL\pN\s]+!u', '', mb_strtolower($title, 'UTF-8'));
-
-        // Replace all separator characters and whitespace by a single separator
-        $title = preg_replace('!['.preg_quote($separator).'\s]+!u', $separator, $title);
-
-        return trim($title, $separator);
-}
-
 
 /**
  * chrome_kill only support windows and linux
+ * 
+ * 
  */
 function chrome_kill() {
     if (KILL_CHROME === 'false') exit;

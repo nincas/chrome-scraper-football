@@ -47,7 +47,7 @@ class Livescore implements Controller {
 
         
         $matches = $this->getMatches();
-        echo "> MatchTotal: " . count($matches) . NL;
+        echo "> To Scrape: " . count($matches) . NL;
         /**
          * Loop return matches
          */
@@ -86,7 +86,7 @@ class Livescore implements Controller {
                                 ->whereIn('e.id', explode(",", $this->event_ids))
                                 ->get();
         } else {
-            $sql = live_query(); // Get default livescore query
+            $sql = $this->database::DEFAULT_LIVESCORE_QRY; // Get default livescore query
             $matches = $this->database->query($sql);
         }
 
@@ -103,6 +103,9 @@ class Livescore implements Controller {
          * Parse html file to data
          */
         $parser = new Parser($this->event_id, $file, $this->database);
+        /**
+         * Get all events parsed from source
+         */
         $events = $parser->match_events($this->status);
         
         /**
@@ -110,14 +113,23 @@ class Livescore implements Controller {
          */
         $flashscore_score = $parser->flashscore_score();
         $livescore = new Lvs($this->event_id, $this->database);
+        /**
+         * Update scores from source
+         */
         $livescore->updateMatchResult2($flashscore_score);
 
         /**
          * Start inserting data
          */
-        if(count($events) > 0) {
+        if (count($events) > 0) {
+            /**
+             * Update football_livescore always
+             */
             $livescore->updateLiveScore($events, 100);
             if ($this->status == 'finished') {
+                /**
+                 * Update postmatch if match is finished
+                 */
                 $livescore->updatePostMatch($events);
             }
         }
@@ -136,18 +148,26 @@ class Livescore implements Controller {
          */
         $parser = new Parser($this->event_id, $file, $this->database);
         $livescore = new Lvs($this->event_id, $this->database);
+        /**
+         * Get all parsed stats
+         */
         $stats = $parser->match_stats();
         
-        if(count($stats) > 0) {
+        if (count($stats) > 0) {
             $array_sts = array();
-            foreach($stats as $ky => $vl) {
-                if($ky == "Corner Kicks") {
+            foreach ($stats as $ky => $vl) {
+                if ($ky == "Corner Kicks") {
+                    /**
+                     * Update corner kicks
+                     */
                     $livescore->updateCKicks($vl["home"]."-".$vl["away"]);
                 } else {
                     $array_sts[$ky] = $vl["home"]."-".$vl["away"];
                 }
             }
-
+            /**
+             * Update stats
+             */
             $livescore->updateStats($array_sts);
         }
     }

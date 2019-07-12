@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Pattern Career
+ */
 namespace Scraper\Build\Pattern;
 
 use Scraper\Kernel\Interfaces\Database as DatabaseInterface;

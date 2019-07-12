@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Pattern Livescore
+ */
 namespace Scraper\Build\Pattern;
 
 use \DOMDocument;
