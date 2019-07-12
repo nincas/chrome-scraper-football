@@ -28,8 +28,8 @@ use Scraper\Interfaces\Controller;
 
 class Career implements Controller {
         public function \_\_construct(Database $database, $param = []) {
-        dump('Career!');
-        exit;
+          dump('Career!');
+          exit;
         }
 }
 ```

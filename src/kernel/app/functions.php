@@ -28,7 +28,7 @@ function saveToFile($data, $file) {
  * @return Array of parameters
  * @example key => value
  */
-function params($limit):array {
+function params(int $limit):array {
     $params = $_SERVER['argv'];
     unset($params[0]); // Remove first param
     $param_list = [];
