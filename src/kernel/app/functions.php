@@ -133,7 +133,7 @@ function is_boolean($string) {
  * 
  */
 function chrome_kill() {
-    if (KILL_CHROME === 'false') exit;
+    if (!KILL_CHROME) exit;
     
     $os_type = windows_os();
 

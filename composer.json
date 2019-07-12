@@ -11,12 +11,12 @@
     "autoload": {
         "psr-4": {
             "Scraper\\": "src",
-            "Scraper\\Build\\Controller\\": "src/build/controller",
-            "Scraper\\Build\\Models\\": "src/build/models",
-            "Scraper\\Build\\Patterns\\": "src/build/patterns",
             "Scraper\\Kernel\\App\\": "src/kernel/app",
+            "Scraper\\Build\\Models\\": "src/build/models",
             "Scraper\\Kernel\\Crawler\\": "src/kernel/crawler",
+            "Scraper\\Build\\Patterns\\": "src/build/patterns",
             "Scraper\\Kernel\\Database\\": "src/kernel/database",
+            "Scraper\\Build\\Controller\\": "src/build/controller",
             "Scraper\\Kernel\\Interfaces\\": "src/kernel/interfaces"
         },
         "files": ["src/kernel/app/functions.php"]

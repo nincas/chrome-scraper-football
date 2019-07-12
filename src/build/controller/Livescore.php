@@ -19,8 +19,6 @@ class Livescore implements Controller {
 
     public function __construct(Database $database, $param = []) {
         $this->database = $database;
-        $event_ids = $param;
-
         /**
          * Check if the param event_id exists on params
          */
