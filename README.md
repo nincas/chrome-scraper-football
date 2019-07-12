@@ -11,8 +11,8 @@
 
 ### Usage
 
-- `php scrape livescore` - will call Livescore::class on `Components\Development\Livescore.php`
-- `php scrape career` - will call Career::class on `Components\Development\Career.php`
+- `php scrape livescore {parameters}` - will call Livescore::class on `src\build\Livescore.php`
+- `php scrape career {parameters}` - will call Career::class on `src\build\Career.php`
 
 ## NOTE:
 
