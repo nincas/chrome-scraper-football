@@ -84,8 +84,8 @@ class Livescore implements Controller {
                                 ->whereIn('e.id', explode(",", $this->event_ids))
                                 ->get();
         } else {
-            $sql = $this->database::DEFAULT_LIVESCORE_QRY; // Get default livescore query
-            $matches = $this->database->query($sql);
+            // Get default livescore query
+            $matches = $this->database->query($this->database::DEFAULT_LIVESCORE_QRY);
         }
 
         return $matches;
