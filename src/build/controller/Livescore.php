@@ -67,10 +67,10 @@ class Livescore implements Controller {
 
                 // Start Crawling
                 $crawler = new Crawler($new_url);
-                $html = $crawler->crawl($file);
+                $crawler->crawl($file);
 
                 // Start parsing, methods below: dynamically called base on type
-                $this->{$base_name}(file_get_contents($file), $file);
+                $this->{$base_name}($file);
             }
         }
     }
@@ -98,7 +98,7 @@ class Livescore implements Controller {
     /**
      * @func call match events parser 
      */
-    protected function matchSummary($html, $file) {
+    protected function matchSummary($file) {
         /**
          * Parse html file to data
          */
@@ -142,7 +142,7 @@ class Livescore implements Controller {
     /**
      * @func call match statistics func
      */
-    public function matchStatistics($html, $file) {
+    public function matchStatistics($file) {
         /**
          * Parse html file to data
          */
