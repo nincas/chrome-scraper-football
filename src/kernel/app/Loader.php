@@ -29,7 +29,6 @@ class Loader {
      * Ex: php scrape livescore - parameter livescore is created as a Class on the \Scraper\Components\Controller\Livescore:class
      */
     public function boot() {
-        
         $params = params(PARAM_LIMIT);
         
         if (!isset($params[0])) error("No inputted parameter.", 0);
@@ -38,7 +37,7 @@ class Loader {
          * Check if class exists
          */
         if (!class_exists($class)) {
-            error("Class '$class::class' does not exists");
+            error("Class '$class::class' does not exists", 2);
         }
 
         echo "> Scraping.." . PHP_EOL;
@@ -46,11 +45,5 @@ class Loader {
          * Call $class::class
          */
         (new $class($this->db, $params));
-
-        /**
-         * Kill all running process of chrome
-         * best for Linux server CLI
-         */
-        chrome_kill();
     }
 }

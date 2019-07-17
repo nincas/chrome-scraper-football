@@ -26,6 +26,7 @@ function saveToFile($data, $file) {
 
 
 function source($file) {
+    if (!file_exists($file)) error('File cannot be read.', 1);
     if (file_exists($file)) {
         $handle = fopen($file, 'r');
         $content = fread($handle, filesize($file));

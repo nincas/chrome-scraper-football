@@ -19,7 +19,9 @@
             "Scraper\\Build\\Controller\\": "src/build/controller",
             "Scraper\\Kernel\\Interfaces\\": "src/kernel/interfaces"
         },
-        "files": ["src/kernel/app/functions.php"]
+        "files": [
+            "src/kernel/app/functions.php"
+        ]
     },
     "require-dev": {
         "symfony/var-dumper": "3.*"

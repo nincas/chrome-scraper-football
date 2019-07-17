@@ -95,12 +95,13 @@ class Parser {
                 if ($val->number == 1) $home = $val->participantFK;
                 if ($val->number == 2) $away = $val->participantFK;
             }
+        } else {
+            error('Match Participants not available.', 1);
         }
 
         setlocale(LC_CTYPE, 'nl_BE.utf8');
 
-
-        $data = file_get_contents( $this->my_file );
+        $data = source( $this->my_file );
         $ev_l = array(
             "substitution-in"     => 1,
             "soccer-ball"         => 3,
@@ -307,7 +308,7 @@ class Parser {
     }
 
     public function flashscore_score() {
-        $data = file_get_contents( $this->my_file );
+        $data = source( $this->my_file );
         $first_half = 0;
         $final = 0;
         $return_value = array(
@@ -690,7 +691,7 @@ class Parser {
             }
         }
         
-        $data = file_get_contents( $this->my_file );
+        $data = source( $this->my_file );
         $stats_field = array();
         $stype = array(
                 "Ball Possession"  => "Ball Poss",
