@@ -66,6 +66,7 @@ class Crawler implements CrawlerInterface {
         // Close browser
         $browser->close();
         
+        chrome_kill();
         echo '> crawled in ' . date('i:s', time() - $start_time) . ' sec' . NL;
 
         return $html;

@@ -133,19 +133,17 @@ function is_boolean($string) {
  * 
  */
 function chrome_kill() {
-    if (!KILL_CHROME) exit;
+    if (!KILL_CHROME) return;
     
     $os_type = windows_os();
 
     if ($os_type) {
         $exec = "taskkill /f /t /im chrome.exe";
         exec($exec);
-        exit;
     }
     
     $exec = "pkill -f chrome";
     exec($exec);
-    exit;
 }
 
 
