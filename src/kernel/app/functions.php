@@ -26,6 +26,7 @@ function saveToFile($data, $file) {
 
 
 function source($file) {
+    if (!file_exists($file)) error('File cannot be read.', 1);
     if (file_exists($file)) {
         $handle = fopen($file, 'r');
         $content = fread($handle, filesize($file));
@@ -133,19 +134,17 @@ function is_boolean($string) {
  * 
  */
 function chrome_kill() {
-    if (!KILL_CHROME) exit;
+    if (!KILL_CHROME) return;
     
     $os_type = windows_os();
 
     if ($os_type) {
         $exec = "taskkill /f /t /im chrome.exe";
         exec($exec);
-        exit;
     }
     
     $exec = "pkill -f chrome";
     exec($exec);
-    exit;
 }
 
 

@@ -712,8 +712,8 @@ class Career implements Controller
 
     public function crawl_page($path, $file_name, $link)
     {
-        $file = FILE_PATH . '/career.html';
+        $file_name = FILE_PATH . '/career.html';
         $crawler = new Crawler($link);
-        $crawler->crawl($file);
+        $crawler->crawl($file_name);
     }
 }

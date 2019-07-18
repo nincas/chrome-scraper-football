@@ -61,11 +61,11 @@ class Livescore implements Controller {
             foreach ($types as $key => $type) {
                 $new_url = str_replace($types[($key == 0 ? 1 : 0)], $type, $match->flashscore_link);
                 $base_name = camel_case(preg_replace('/[0-9]+/', '', str_slug($type)));
-                $file = FILE_PATH . $base_name . '.html';
+                $file_name = FILE_PATH . $base_name . '.html';
 
                 // Start Crawling
                 $crawler = new Crawler($new_url);
-                $crawler->crawl($file);
+                $crawler->crawl($file_name);
 
                 // Start parsing, methods below: dynamically called base on type
                 $this->{$base_name}($file);
