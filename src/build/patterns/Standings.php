@@ -57,8 +57,6 @@ class Standings {
             'points' => 7
         );
         $homeAway = array(3, 1, 2);
-        $home_away = array('overall' => 3, 'home' => 1, 'away' => 2);
-        
         for ($i = 0; $i < $div->length; $i++) {
             $inner_divs = $div->item($i)->getElementsByTagName('div');
             foreach ($inner_divs as $inner_div) {
@@ -134,11 +132,11 @@ class Standings {
                                         $row['goalFor'] = $goalsFor;
                                         $row['goalAgainst'] = $goalsAgainst;
                                         $row['goalDifference'] = $goalDifference;
-                                    }else{
+                                    } else {
                                         $row[$standing_key] = $tbody_tr_tds->item($l)->textContent;
                                     }
                                 }
-                                $row['homeAway'] = $home_away[$type];
+                                $row['homeAway'] = $homeAway[$i];
                                 $return['standings'][] = $row;
                             }
                         }
