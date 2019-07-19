@@ -68,7 +68,7 @@ class Livescore implements Controller {
                 $crawler->crawl($file_name);
 
                 // Start parsing, methods below: dynamically called base on type
-                $this->{$base_name}($file);
+                $this->{$base_name}($file_name);
             }
         }
     }

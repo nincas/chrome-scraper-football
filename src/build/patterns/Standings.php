@@ -39,6 +39,8 @@ class Standings {
             'standings' => array(),
             'adjustments' => array()
         );
+
+        libxml_use_internal_errors(true);
         $dom = new DOMDocument();
         $dom->loadHTML($data);
         $dom->encoding = 'UTF-8';
@@ -134,7 +136,7 @@ class Standings {
                                         $row['goalFor'] = $goalsFor;
                                         $row['goalAgainst'] = $goalsAgainst;
                                         $row['goalDifference'] = $goalDifference;
-                                    }else{
+                                    } else {
                                         $row[$standing_key] = $tbody_tr_tds->item($l)->textContent;
                                     }
                                 }
@@ -175,6 +177,7 @@ class Standings {
                 }
             }
         }
+        
         return $return;
     }
 
