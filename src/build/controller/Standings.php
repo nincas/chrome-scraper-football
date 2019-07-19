@@ -72,8 +72,7 @@ class Standings implements Controller {
 
                 // Start Crawling
                 $crawler = new Crawler($new_url);
-                $crawler->crawl($file);
-
+                $crawler->standingsCrawl($file);
                 // Start parsing, methods below: dynamically called base on type
                 $this->glib_stats_box_table($file, $ids, str_replace('#table;', '', $type));
             }
