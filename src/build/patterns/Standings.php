@@ -39,6 +39,8 @@ class Standings {
             'standings' => array(),
             'adjustments' => array()
         );
+
+        libxml_use_internal_errors(true);
         $dom = new DOMDocument();
         $dom->loadHTML($data);
         $dom->encoding = 'UTF-8';
@@ -55,6 +57,8 @@ class Standings {
             'points' => 7
         );
         $homeAway = array(3, 1, 2);
+        $home_away = array('overall' => 3, 'home' => 1, 'away' => 2);
+        
         for ($i = 0; $i < $div->length; $i++) {
             $inner_divs = $div->item($i)->getElementsByTagName('div');
             foreach ($inner_divs as $inner_div) {
@@ -134,7 +138,7 @@ class Standings {
                                         $row[$standing_key] = $tbody_tr_tds->item($l)->textContent;
                                     }
                                 }
-                                $row['homeAway'] = $homeAway[$i];
+                                $row['homeAway'] = $home_away[$type];
                                 $return['standings'][] = $row;
                             }
                         }
@@ -171,6 +175,7 @@ class Standings {
                 }
             }
         }
+        
         return $return;
     }
 
