@@ -515,6 +515,7 @@ class Standings {
             WHERE tournament_templateFK = " . $this->ids['tournament_template_id'] . 
             " AND tournamentFK = " . $this->ids['tournament_id'] . 
             " AND tournament_stageFK = " . $this->ids['tournament_stage_id'] . 
+            " AND homeAway = " . $data['standings'][0]['homeAway'] . 
             " AND id NOT IN (" . implode(', ', $standings_ids) . ")");
         }
         // print_r($data['standings']);
