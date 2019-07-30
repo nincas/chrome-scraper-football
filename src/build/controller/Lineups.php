@@ -121,7 +121,7 @@ class Lineups implements Controller {
             AND e.`del` = 'no'
             AND e.`status_type` NOT IN ('deleted', 'notstarted', 'inprogress')
             GROUP BY e.`id`
-            ORDER BY e.`start_date`
+            ORDER BY e.`startdate`
             ";
         }
         $matches = $this->database->query($sql);
