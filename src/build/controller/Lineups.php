@@ -15,6 +15,8 @@ class Lineups implements Controller {
     private $event_id;
     private $status;
     private $start_date;
+    private $page;
+    private $per_page = 100;
 
 
     public function __construct(Database $database, $param = []) {
@@ -26,6 +28,8 @@ class Lineups implements Controller {
             $this->event_ids = $param['event_id'];
         }
         $this->start_date = (!empty($param['start_date'])) ? $param['start_date'] : '';
+        $this->page = (!empty($param['page'])) && is_numeric($param['page']) ? $param['page'] : '';
+        $this->per_page = (!empty($param['per_page'])) && is_numeric($param['per_page']) ? $param['per_page'] : $this->per_page;
 
         /**
          * Start standings
@@ -105,6 +109,11 @@ class Lineups implements Controller {
             }else{
                 $yesterday = date('Y-m-d H:i:s', strtotime('- 4 hours'));
             }
+            $sql_paginate = '';
+            if(!empty($this->page)){
+                $offset = ($this->page * $this->per_page) - $this->per_page;
+                $sql_paginate = 'LIMIT ' . $offset . ',  ' . $this->per_page;
+            }
             
             $sql = "
             SELECT 
@@ -122,6 +131,7 @@ class Lineups implements Controller {
             AND e.`status_type` NOT IN ('deleted', 'notstarted', 'inprogress')
             GROUP BY e.`id`
             ORDER BY e.`startdate`
+            $sql_paginate
             ";
         }
         $matches = $this->database->query($sql);
