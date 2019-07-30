@@ -78,7 +78,7 @@ class Lineups {
                             $a_tags = $td->getElementsByTagName('a');
                             foreach($a_tags as $a_tag){
                                 $fs_onclick = $a_tag->getAttribute('onclick');
-                                if(!empty($fs_onclick)){
+                                if(!empty($fs_onclick) && strpos($fs_onclick, 'player') !== false){
                                     $fs_onclick = str_replace("window.open('/player/", '', str_replace("/'); return false;", '', $fs_onclick));
                                     $player_onclick = explode('/', $fs_onclick);
 
