@@ -59,45 +59,47 @@ class Lineups {
         );
         foreach($wrappers as $wrapper){
             $divs = $finder->query("//*[contains(@class, '" . $wrapper . "')]");
-            $div = $divs->item(0);
-            $trs = $div->getElementsByTagName('tr');
-            foreach($trs as $tr){
-                $tds = $tr->getElementsByTagName('td');
-                foreach($tds as $td){
-                    $td_class = explode(' ', $td->getAttribute('class'));
-                    $homeAway = '';
-                    if(in_array('fl', $td_class)){
-                        $homeAway = 'home';
-                    }else if(in_array('fr', $td_class)){
-                        $homeAway = 'away';
-                    }
+            if($divs->length > 0){
+                $div = $divs->item(0);
+                $trs = $div->getElementsByTagName('tr');
+                foreach($trs as $tr){
+                    $tds = $tr->getElementsByTagName('td');
+                    foreach($tds as $td){
+                        $td_class = explode(' ', $td->getAttribute('class'));
+                        $homeAway = '';
+                        if(in_array('fl', $td_class)){
+                            $homeAway = 'home';
+                        }else if(in_array('fr', $td_class)){
+                            $homeAway = 'away';
+                        }
 
-                    if(!empty($homeAway)){
-                        $a_tags = $td->getElementsByTagName('a');
-                        foreach($a_tags as $a_tag){
-                            $fs_onclick = $a_tag->getAttribute('onclick');
-                            if(!empty($fs_onclick)){
-                                $fs_onclick = str_replace("window.open('/player/", '', str_replace("/'); return false;", '', $fs_onclick));
-                                $player_onclick = explode('/', $fs_onclick);
+                        if(!empty($homeAway)){
+                            $a_tags = $td->getElementsByTagName('a');
+                            foreach($a_tags as $a_tag){
+                                $fs_onclick = $a_tag->getAttribute('onclick');
+                                if(!empty($fs_onclick)){
+                                    $fs_onclick = str_replace("window.open('/player/", '', str_replace("/'); return false;", '', $fs_onclick));
+                                    $player_onclick = explode('/', $fs_onclick);
 
-                                $team_id = $this->ids[$homeAway . '_team_id'];
+                                    $team_id = $this->ids[$homeAway . '_team_id'];
 
-                                $player_shortname = $a_tag->textContent;
-                                $spans = $a_tag->getElementsByTagName('span');
-                                foreach($spans as $span){
-                                    $span_text = $span->textContent;
-                                    $player_shortname = str_replace($span_text, '', $player_shortname);
+                                    $player_shortname = $a_tag->textContent;
+                                    $spans = $a_tag->getElementsByTagName('span');
+                                    foreach($spans as $span){
+                                        $span_text = $span->textContent;
+                                        $player_shortname = str_replace($span_text, '', $player_shortname);
+                                    }
+
+                                    $player_params = array(
+                                      'player_fullname' => $player_onclick[0],
+                                      'player_shortname' => $player_shortname,
+                                      'team_id' => $team_id,
+                                      'shirt_number' => null,
+                                      'fs_id' => $player_onclick[1]
+                                    );
+
+                                    $player = $this->playerFinder($player_params, $this->ids['event_id']);
                                 }
-
-                                $player_params = array(
-                                  'player_fullname' => $player_onclick[0],
-                                  'player_shortname' => $player_shortname,
-                                  'team_id' => $team_id,
-                                  'shirt_number' => null,
-                                  'fs_id' => $player_onclick[1]
-                                );
-
-                                $player = $this->playerFinder($player_params, $this->ids['event_id']);
                             }
                         }
                     }
