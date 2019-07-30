@@ -71,7 +71,7 @@ class Lineups implements Controller {
 
             // Start Crawling
             $crawler = new Crawler($new_url);
-            $crawler->standingsCrawl($file);
+            $crawler->crawl($file);
             // Start parsing, methods below: dynamically called base on type
             $this->lineups_content($file, $ids);
         }

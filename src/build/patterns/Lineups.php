@@ -60,6 +60,7 @@ class Lineups {
         foreach($wrappers as $wrapper){
             $divs = $finder->query("//*[contains(@class, '" . $wrapper . "')]");
             if($divs->length > 0){
+                dump($wrapper);
                 $div = $divs->item(0);
                 $trs = $div->getElementsByTagName('tr');
                 foreach($trs as $tr){
