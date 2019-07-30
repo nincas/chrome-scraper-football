@@ -97,6 +97,7 @@ class Lineups implements Controller {
             AND e.`status_type` NOT IN ('deleted', 'notstarted', 'inprogress')
             AND e.`id` IN ($event_ids)
             GROUP BY e.`id`
+            ORDER BY e.`startdate
             ";
         }else{
             if(!empty($this->start_date)){
@@ -120,7 +121,7 @@ class Lineups implements Controller {
             AND e.`del` = 'no'
             AND e.`status_type` NOT IN ('deleted', 'notstarted', 'inprogress')
             GROUP BY e.`id`
-            LIMIT 1
+            ORDER BY e.`startdate
             ";
         }
         $matches = $this->database->query($sql);
