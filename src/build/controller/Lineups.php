@@ -17,6 +17,7 @@ class Lineups implements Controller {
     private $start_date;
     private $page;
     private $per_page = 100;
+    private $item_counter = 0;
 
 
     public function __construct(Database $database, $param = []) {
@@ -30,6 +31,7 @@ class Lineups implements Controller {
         $this->start_date = (!empty($param['start_date'])) ? $param['start_date'] : '';
         $this->page = (!empty($param['page'])) && is_numeric($param['page']) ? $param['page'] : '';
         $this->per_page = (!empty($param['per_page'])) && is_numeric($param['per_page']) ? $param['per_page'] : $this->per_page;
+        $this->item_counter = (!empty($param['item_counter'])) && is_numeric($param['item_counter']) ? $param['item_counter'] : $this->item_counter;
 
         /**
          * Start standings
@@ -63,6 +65,10 @@ class Lineups implements Controller {
             /**
              * Loop types
              */
+            if(!empty($this->item_counter)){
+                dump('#' . $this->item_counter);
+            }
+            
             $ids = array();
             $ids['event_id'] = $match->event_id;
             $ids['home_team_id'] = $match->home_team_id;
@@ -78,6 +84,9 @@ class Lineups implements Controller {
             $crawler->crawl($file);
             // Start parsing, methods below: dynamically called base on type
             $this->lineups_content($file, $ids);
+            if(!empty($this->item_counter)){
+                $this->item_counter = $this->item_counter + 1;
+            }
         }
     }
 
