@@ -122,6 +122,9 @@ class Lineups implements Controller {
             if(!empty($this->page)){
                 $offset = ($this->page * $this->per_page) - $this->per_page;
                 $sql_paginate = 'LIMIT ' . $offset . ',  ' . $this->per_page;
+            }else{
+                $offset = $this->item_counter - 1;
+                $sql_paginate = 'LIMIT ' . $offset . ',  ' . $this->per_page;
             }
             
             $sql = "
