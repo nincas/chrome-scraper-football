@@ -113,11 +113,12 @@ class Lineups implements Controller {
             ORDER BY e.`startdate` ASC, e.`id` ASC
             ";
         }else{
+            $where = '';
             if(!empty($this->start_date)){
                 $yesterday = date('Y-m-d H:i:s', strtotime($this->start_date));
-            }else{
-                $yesterday = date('Y-m-d H:i:s', strtotime('- 4 hours'));
+                $where = "AND e.`startdate` >= '$yesterday'"; 
             }
+
             $sql_paginate = '';
             if(!empty($this->page)){
                 $offset = ($this->page * $this->per_page) - $this->per_page;
@@ -141,6 +142,7 @@ class Lineups implements Controller {
             AND fs.`flashscore_link` LIKE '%flashscore.com%'
             AND e.`del` = 'no'
             AND e.`status_type` NOT IN ('deleted', 'notstarted', 'inprogress')
+            $where
             GROUP BY e.`id`
             ORDER BY e.`startdate` ASC, e.`id` ASC
             $sql_paginate
