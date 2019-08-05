@@ -15,6 +15,7 @@ class Lineups implements Controller {
     private $event_id;
     private $status;
     private $start_date;
+    private $end_date;
     private $page;
     private $per_page = 100;
     private $item_counter = 0;
@@ -32,6 +33,7 @@ class Lineups implements Controller {
         $this->page = (!empty($param['page'])) && is_numeric($param['page']) ? $param['page'] : '';
         $this->per_page = (!empty($param['per_page'])) && is_numeric($param['per_page']) ? $param['per_page'] : $this->per_page;
         $this->item_counter = (!empty($param['item_counter'])) && is_numeric($param['item_counter']) ? $param['item_counter'] : $this->item_counter;
+        $this->end_date = (!empty($param['end_date'])) ? $param['end_date'] : '';
 
         /**
          * Start standings
@@ -116,14 +118,26 @@ class Lineups implements Controller {
             $where = '';
             if(!empty($this->start_date)){
                 $yesterday = date('Y-m-d H:i:s', strtotime($this->start_date));
-                $where = "AND e.`startdate` >= '$yesterday'"; 
+                if(!empty($where)){
+                    $where .= " ";
+                }
+                $where .= "AND e.`startdate` >= '$yesterday'"; 
+            }
+
+            if(!empty($this->end_date)){
+                $yesterday = date('Y-m-d H:i:s', strtotime($this->end_date . ' 23:59:59'));
+                if(!empty($where)){
+                    $where .= " ";
+                }
+                $where .= "AND e.`startdate` <= '$yesterday'"; 
             }
 
             $sql_paginate = '';
             if(!empty($this->page)){
                 $offset = ($this->page * $this->per_page) - $this->per_page;
                 $sql_paginate = 'LIMIT ' . $offset . ',  ' . $this->per_page;
-            }else{
+            }
+            if(!empty($this->item_counter)){
                 $offset = $this->item_counter - 1;
                 $sql_paginate = 'LIMIT ' . $offset . ',  ' . $this->per_page;
             }
