@@ -573,7 +573,7 @@ class Career implements Controller
                 $cpath = $path . 'text_file/' . $date_folder;
 
                 if (file_exists(FILE_PATH . $file)) {
-                    $careerPattern = new CareerPattern($file, $data);
+                    $careerPattern = new CareerPattern($file, $data, $this->database);
                     $careers = $careerPattern->patternCareer();
                     $careerPattern->updateCareer();
                 }

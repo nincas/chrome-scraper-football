@@ -19,9 +19,10 @@ class Career {
     private $data;
     private $careers = [];
     private $html;
+    private $database;
 
-    public function __construct(string $file, $data) {
-        
+    public function __construct(string $file, $data, $database) {
+        $this->database = $database;
         $this->file = $file;
         $this->crawl_path = FILE_PATH;
         $this->data = $data;
