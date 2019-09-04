@@ -51,6 +51,7 @@ class Standings implements Controller {
         /**
          * Loop return matches
          */
+        
         foreach ($stages as $key => $stage) {
             /**
              * Pre-defined vars
@@ -171,8 +172,8 @@ class Standings implements Controller {
         /**
          * Get all events parsed from source
          */
-        $standings = $parser->standings($type);
-
+        $standings = $parser->standings2($type);
+        
         /**
          * Start inserting data
          */

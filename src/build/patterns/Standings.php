@@ -46,6 +46,7 @@ class Standings {
         $dom->encoding = 'UTF-8';
         $finder = new DomXPath($dom);
         $div = $finder->query("//*[contains(@class, 'glib-stats-box-table-" . $type . "')]");
+
         $standing_col = array(
             'name' => 1,
             'rank' => 0,
@@ -178,6 +179,162 @@ class Standings {
             }
         }
         
+        return $return;
+    }
+
+
+    public function standings2($type) {
+        $database = $this->database;
+        $data = file_get_contents( $this->my_file );
+        $return = array(
+            'standings' => array(),
+            'adjustments' => array()
+        );
+
+        libxml_use_internal_errors(true);
+        $dom = new DOMDocument();
+        $dom->loadHTML($data);
+        $dom->encoding = 'UTF-8';
+        $finder = new DomXPath($dom);
+        $div = $finder->query("//*[contains(@class, 'glib-stats-box-table-" . $type . "')]");
+
+        $standing_col = array(
+            'name' => 1,
+            'rank' => 0,
+            'matchPlayed' => 2,
+            'won' => 3,
+            'lose' => 5,
+            'draw' => 4,
+            'goals' => 6,
+            'points' => 7
+        );
+
+        $homeAway = array(
+            'overall' => 3, 
+            'home' => 1, 
+            'away' => 2
+        );
+
+
+        $table_header = $finder->query("//*[contains(@class, 'table__header')]");
+        $table_body = $finder->query("//*[contains(@class, 'table__body')]");
+        $adjustments_body = $finder->query("//*[contains(@class, 'cms table-incidents')]");
+
+        /*dump($table_header->item(0)->getElementsByTagName('div')->item(0)->getAttribute('class'));
+        dump($table_body->item(0)->getElementsByTagName('div')->item(0)->getAttribute('class'));
+        exit;*/
+        $row = array();
+        for ($jj = 0; $jj < $table_header->length; $jj++) {
+            $thead_tr = $table_header->item($jj);
+            $thead_tr_class = $thead_tr->getAttribute('class');
+            $groupFK = 0;
+
+            $col_name = $table_header->item($jj)->getElementsByTagName('div')->item(1)->textContent;
+            
+            if ($col_name) {
+                $col_name_txt = $col_name;
+                
+                if ($col_name_txt == 'Team') {
+                    $group_name = 'N/A';
+                } else {
+                    if (strpos($col_name_txt, 'Group') !== true) {
+                        $group_name = trim(str_replace('Group', '', $col_name_txt));
+                    } else {
+                        $group_name = trim($col_name_txt);
+                    }
+                }
+                
+                $res_group = $database->query("SELECT * FROM groups WHERE tournament_templateFK = " . $this->ids['tournament_template_id'] . " AND tournamentFK = " . $this->ids['tournament_id'] . " AND tournament_stageFK = " . $this->ids['tournament_stage_id'] . " AND name = '" . $group_name . "'");
+                if (count($res_group) == 1) {
+                    foreach($res_group as $res_group_row){
+                        $groupFK = $res_group_row->id;
+                    }
+                }
+            }
+
+            if (!empty($col_name_txt)) {
+                $tbody = $table_body->item($jj)->getElementsByTagName('div');
+                
+                for ($k = 0; $k < $tbody->length; $k++) {
+
+                    $divs = $tbody->item($k)->getElementsByTagName('div');
+                    if ($divs->length == 9) {
+                        foreach ($divs as $idx => $value) {
+                            $row['tournament_templateFK'] = $this->ids['tournament_template_id'];
+                            $row['tournamentFK'] = $this->ids['tournament_id'];
+                            $row['tournament_stageFK'] = $this->ids['tournament_stage_id'];
+                            $row['groupFK'] = $groupFK; 
+                            $row['homeAway'] = $homeAway[$type];
+                            
+                            foreach ($standing_col as $standing_key => $idxx) {
+                                if ($idxx == $idx) {
+                                    if ($idxx == 1) {
+                                        $team_name = trim($value->textContent);
+                                        
+                                        $onclick = $value->getElementsByTagName('a')->item(0)->getAttribute('onclick');
+                                        preg_match('/\((.*?)\)/', $onclick, $result);
+                                        $exploded_onclick = explode("/", $result[1]);
+                                        $team_params = ['id' => $exploded_onclick[3], 'url' => $exploded_onclick[2], 'name' => $team_name];
+                                        
+                                        $teamFinder = $this->teamFinder($team_params);
+                                        $this->flashscore_alias[$teamFinder['flashscore_alias_id']] = $team_name;
+                                        $this->flashscore_params[$teamFinder['flashscore_alias_id']] = $team_params;
+                                        $row['teamFK'] = $teamFinder['participant_id'];
+                                        $row['flashscore_alias_id'] = $teamFinder['flashscore_alias_id'];
+                                    } else if ($idxx == 6) {
+                                        $goals = explode(':', trim($value->textContent));
+                                        
+                                        $goalsFor = $goals[0];
+                                        $goalsAgainst = $goals[1];
+                                        $goalDifference = $goals[0] - $goals[1];
+                                        $row['goalFor'] = $goalsFor;
+                                        $row['goalAgainst'] = $goalsAgainst;
+                                        $row['goalDifference'] = $goalDifference;
+                                    } else {
+                                        $row[$standing_key] = trim($value->textContent);
+                                    }
+                                }
+                            }
+                        }
+
+                        $return['standings'][] = $row;
+                    }
+                }
+            }
+        }
+
+        for ($i = 0; $i < $adjustments_body->length; $i++) {
+            $uls = $adjustments_body->item(0)->getElementsByTagName('li');
+
+            foreach ($uls as $key => $li) {
+                $li_content = $li->textContent;
+                $explode_team_name = explode(':', $li->textContent);
+                $row = array();
+                $row['tournament_templateFK'] = $this->ids['tournament_template_id'];
+                $row['tournamentFK'] = $this->ids['tournament_id'];
+                $row['tournament_stageFK'] = $this->ids['tournament_stage_id'];
+                $team_name = $explode_team_name[0];
+                $flashscore_alias_id = array_search($team_name, $this->flashscore_alias);
+                $team_params = $this->flashscore_params[$flashscore_alias_id];
+                $teamFinder = $this->teamFinder($team_params);
+                $row['teamFK'] = $teamFinder['participant_id'];
+                $row['flashscore_alias_id'] = $teamFinder['flashscore_alias_id'];
+                // $row['team_name'] = $teamFinder['participant_name'];
+                $li_content = str_replace($team_name, '', $li_content);
+                $li_content = trim($li_content, ': ');
+                $explode_description = explode('(', $li_content);
+                if(strpos($explode_description[0], '+') !== false){
+                    $row['adjustment_type'] = 'addition';
+                }
+                if(strpos($explode_description[0], '-') !== false){
+                    $row['adjustment_type'] = 'deduction';
+                }
+                $row['points'] = trim($explode_description[0], '- + points point');
+                $row['description'] = trim($explode_description[1], '()');
+                $return['adjustments'][] = $row;
+            }
+        }
+
         return $return;
     }
 
@@ -520,6 +677,7 @@ class Standings {
         }
         // print_r($data['standings']);
     }
+
     public function updateAdjustments($data){
         $database = $this->database;
         foreach($data['adjustments'] as $adjustment){
@@ -626,6 +784,7 @@ class Standings {
                 }else{
                     $sql = "UPDATE standing_adjustments SET
                     adjustment_type = \"" . $adjustment['adjustment_type'] . "\", 
+                    adjustment_reason = \"" . $adjustment['description'] . "\", 
                     adjustment_value = " . $adjustment['points'] .
                     " WHERE id = " . $existing_adjustments[0];
 
@@ -668,6 +827,7 @@ class Standings {
                     'user_id' => 100, 
                     'history' => 'no'
                 ]);
+
                 if(empty($adjustment['teamFK'])){
                     $sql = "INSERT INTO flashscore_alias_auto_tag
                     (

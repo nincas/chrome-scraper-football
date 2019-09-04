@@ -91,8 +91,8 @@ class Crawler implements CrawlerInterface {
         // Wait for browser timeout to load
         $page->navigate($this->url)->waitForNavigation('networkIdle', TIMEOUT_SEC);
 
-        // Evaluate html
         sleep(2);
+        // Evaluate html
         $evaluate = $page->evaluate('document.documentElement.outerHTML')->waitForResponse(TIMEOUT_SEC);
 
         // Get return value
