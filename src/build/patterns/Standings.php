@@ -216,8 +216,8 @@ class Standings {
         );
 
 
-        $table_header = $finder->query("//*[contains(@class, 'table__header')]");
-        $table_body = $finder->query("//*[contains(@class, 'table__body')]");
+        $table_header = $finder->query("//div[@class='table__header']");
+        $table_body = $finder->query("//div[@class='table__body']");
         $adjustments_body = $finder->query("//*[contains(@class, 'cms table-incidents')]");
 
         /*dump($table_header->item(0)->getElementsByTagName('div')->item(0)->getAttribute('class'));
@@ -229,7 +229,7 @@ class Standings {
             $thead_tr_class = $thead_tr->getAttribute('class');
             $groupFK = 0;
 
-            $col_name = $table_header->item($jj)->getElementsByTagName('div')->item(1)->textContent;
+            $col_name = $table_header->item($jj)->getElementsByTagName('div')->item(0)->textContent;
             
             if ($col_name) {
                 $col_name_txt = $col_name;
