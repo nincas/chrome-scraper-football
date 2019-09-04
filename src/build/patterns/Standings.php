@@ -229,7 +229,7 @@ class Standings {
             $thead_tr_class = $thead_tr->getAttribute('class');
             $groupFK = 0;
 
-            $col_name = $table_header->item($jj)->getElementsByTagName('div')->item(0)->textContent;
+            $col_name = $table_header->item($jj)->getElementsByTagName('div')->item(1)->textContent;
             
             if ($col_name) {
                 $col_name_txt = $col_name;
@@ -335,6 +335,7 @@ class Standings {
             }
         }
 
+        
         return $return;
     }
 
@@ -536,6 +537,7 @@ class Standings {
                             'homeAway' => $standing['homeAway'],
                             'lastUpdated' => date('Y-m-d H:i:s')
                         ]);
+
                         $standings_ids[] = $standings_id;
 
                         if(empty($standing['teamFK'])){
