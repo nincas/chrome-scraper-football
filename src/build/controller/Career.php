@@ -22,6 +22,7 @@ class Career implements Controller
     public $crawl_started_strtotime = null;
     public $players_count = 0;
     public $players_total = 0;
+    public $log_id;
 
 
     private $database;
@@ -150,8 +151,8 @@ class Career implements Controller
                     $is_crawled = 'yes';
                 }
 
-                $this->database->table('career_crawler_logs')
-                    ->insert(
+                $this->log_id = $this->database->table('career_crawler_logs')
+                    ->insertGetId(
                         array(
                             'type' => 'all',
                             'date_created' => $today,
@@ -161,6 +162,10 @@ class Career implements Controller
                             'total_crawled' => $this->players_count,
                         )
                     );
+
+                $this->active_crawl = $this->database->table('career_crawler_logs')
+                                        ->where('id', $this->log_id)
+                                        ->first();
             }
 
             $this->foreachPlayers($players);
@@ -538,7 +543,7 @@ class Career implements Controller
 
     public function foreachPlayers($players)
     {
-        foreach ($players as $data) {
+        foreach ($players as $idx => $data) {
             $this->crawl_started_strtotime = strtotime('now');
             if (!empty($this->strtotime_limit) && $this->crawl_started_strtotime >= $this->strtotime_limit) {
                 break;
@@ -556,6 +561,7 @@ class Career implements Controller
 
             $site = 'flashscore';
 
+
             $file_name = $data['player_id'] . '_' . $site;
             $return_value = $this->crawl_page($path, $file_name, $link);
             if ($return_value == 'Error') {
@@ -568,6 +574,7 @@ class Career implements Controller
                 continue;
             }
 
+           
             if ($indicator) {
                 $file = 'career.html';
                 $cpath = $path . 'text_file/' . $date_folder;
@@ -599,6 +606,7 @@ class Career implements Controller
                 $update_data['total_crawled'] = $total_crawled;
                 $update_data['date_updated'] = date('Y-m-d H:i:s');
 
+                dump(($idx + 1) . '# ' . $data['fs_alias']);
                 if (!empty($update_data)) {
                     $this->database->table('career_crawler_logs')
                         ->where('id', $this->active_crawl->id)
@@ -714,6 +722,7 @@ class Career implements Controller
     {
         $file_name = FILE_PATH . '/career.html';
         $crawler = new Crawler($link);
-        $crawler->crawl($file_name);
+        $html = $crawler->crawl($file_name);
+        return $html;
     }
 }
