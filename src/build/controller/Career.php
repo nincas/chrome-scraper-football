@@ -77,7 +77,7 @@ class Career implements Controller
             $active_crawl = $this->database->table('career_crawler_logs')
                 ->where('is_crawled', 'no')
                 ->where('type', 'all')
-                ->orderBy('date_created')
+                ->orderBy('id', 'DESC')
                 ->first();
 
             if ($active_crawl) {
@@ -696,7 +696,7 @@ class Career implements Controller
 
     public function individualCrawl($params)
     {
-
+        $this->params = $params;
         if (!empty($params['limit']) && is_numeric($params['limit'])) {
             $this->per_page = $params['limit'];
             // $this->setPerPage($params['limit']);
