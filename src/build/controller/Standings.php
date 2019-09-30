@@ -9,7 +9,7 @@ use Scraper\Build\Pattern\Standings as StandingsPattern;
 
 class Standings implements Controller {
 
-    
+    /* Vars */
     private $database;
     private $event_ids;
     private $event_id;
@@ -25,6 +25,9 @@ class Standings implements Controller {
         if (@array_key_exists('event_id', $param)) {
             $this->event_ids = $param['event_id'];
         }
+        /**
+        * For historical
+        */
         $this->start_date = (!empty($param['start_date'])) ? $param['start_date'] : '';
 
         /**
@@ -39,35 +42,27 @@ class Standings implements Controller {
      * Livescore starting function for parsing/crawling
      */
     public  function standings() {
-        $types = [
-            '#table;overall',
-            '#table;home',
-            '#table;away'
-        ];
-
+        $types = ['#table;overall', '#table;home', '#table;away'];
         
         $stages = $this->getStages();
         echo "> To Scrape: " . count($stages) . NL;
         /**
          * Loop return matches
          */
-        
         foreach ($stages as $key => $stage) {
-            /**
-             * Pre-defined vars
-             */
-
             /**
              * Loop types
              */
-            $ids = array();
+            $ids = [];
             $ids['tournament_template_id'] = $stage->tournament_template_id;
             $ids['tournament_id'] = $stage->tournament_id;
             $ids['tournament_stage_id'] = $stage->tournament_stage_id;
             foreach ($types as $key => $type) {
+
                 $new_url = $stage->flashscore_link;
                 $new_url = str_replace($types, '', $new_url);
                 $new_url = $new_url . $type;
+
                 $base_name = camel_case(preg_replace('/[0-9]+/', '', str_slug($type)));
                 $file = FILE_PATH . $base_name . '.html';
 
@@ -110,9 +105,9 @@ class Standings implements Controller {
             GROUP BY ts.`id`
             ";
         }else{
-            if(!empty($this->start_date)){
+            if (!empty($this->start_date)) {
                 $yesterday = date('Y-m-d H:i:s', strtotime($this->start_date));
-            }else{
+            } else {
                 $yesterday = date('Y-m-d H:i:s', strtotime('- 4 hours'));
             }
             
@@ -155,6 +150,7 @@ class Standings implements Controller {
             )
             ";
         }
+
         $stages = $this->database->query($sql);
         return $stages;
     }
@@ -172,12 +168,12 @@ class Standings implements Controller {
         /**
          * Get all events parsed from source
          */
-        $standings = $parser->standings2($type);
-        
+        $standings = $parser->standings($type);
+
         /**
          * Start inserting data
          */
-        if (count($standings) > 0) {
+        if (count($standings['standings']) > 0 || count($standings['adjustments']) > 0) {
             /**
              * Update standings
              */
@@ -186,43 +182,6 @@ class Standings implements Controller {
              * Update adjustments
              */
             $parser->updateAdjustments($standings);
-        }
-    }
-
-
-
-
-
-    /**
-     * @func call match statistics func
-     */
-    public function matchStatistics($file) {
-        /**
-         * Parse html file to data
-         */
-        $parser = new Parser($this->event_id, $file, $this->database);
-        $livescore = new Lvs($this->event_id, $this->database);
-        /**
-         * Get all parsed stats
-         */
-        $stats = $parser->match_stats();
-        
-        if (count($stats) > 0) {
-            $array_sts = array();
-            foreach ($stats as $ky => $vl) {
-                if ($ky == "Corner Kicks") {
-                    /**
-                     * Update corner kicks
-                     */
-                    $livescore->updateCKicks($vl["home"]."-".$vl["away"]);
-                } else {
-                    $array_sts[$ky] = $vl["home"]."-".$vl["away"];
-                }
-            }
-            /**
-             * Update stats
-             */
-            $livescore->updateStats($array_sts);
         }
     }
 }
