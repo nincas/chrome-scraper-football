@@ -4,9 +4,6 @@
  */
 namespace Scraper\Build\Pattern;
 
-use \DOMDocument;
-use \DomXPath;
-
 use Scraper\Kernel\Interfaces\Database as DatabaseInterface;
 
 
@@ -101,7 +98,6 @@ class Parser {
 
         setlocale(LC_CTYPE, 'nl_BE.utf8');
 
-        $data = source( $this->my_file );
         $ev_l = array(
             "substitution-in"     => 1,
             "soccer-ball"         => 3,
@@ -115,12 +111,10 @@ class Parser {
             "(Penalty missed)"    => 12
         );
 
-        libxml_use_internal_errors(true); // Disable warnings
+        $dom_document = domDocument($this->my_file);
+        $dom = $dom_document->dom;
+        $finder = $dom_document->finder;
 
-        $dom = new DOMDocument();
-        $dom->loadHTML($data);
-        $dom->encoding = 'UTF-8';
-        $finder = new DomXPath($dom);
         $div = $finder->query("//*[contains(@class, 'detailMS__incidentRow')]");
         $match_status = $finder->query("//*[contains(@class, 'info-status mstat')]");
         $done_statuses = array('Finished', 'After Penalties');
@@ -221,7 +215,7 @@ class Parser {
                     $time = abs(str_replace("'", "", $class_div->textContent));
                 } else if (strpos($div2, "icon-box") !== false) {
                     $match_incident = explode(" ", $div2);
-                    $incident_id = $ev_l[$match_incident[1]];
+                    $incident_id = @$ev_l[$match_incident[1]];
                     $spans = $div->item($i)->getElementsByTagName('span');
 
                     foreach ($spans as $span) {
@@ -308,7 +302,6 @@ class Parser {
     }
 
     public function flashscore_score() {
-        $data = source( $this->my_file );
         $first_half = 0;
         $final = 0;
         $return_value = array(
@@ -316,11 +309,9 @@ class Parser {
             'away' => array('halftime' => 0, 'finalresult' => 0)
         );
 
-        libxml_use_internal_errors(true); 
-        $dom = new DOMDocument();
-        $dom->loadHTML($data);
-        $dom->encoding = 'UTF-8';
-        $finder = new DomXPath($dom);
+        $dom_document = domDocument($this->my_file);
+        $dom = $dom_document->dom;
+        $finder = $dom_document->finder;
 
         $match_status = $finder->query("//*[contains(@class, 'info-status mstat')]");
 
@@ -691,7 +682,6 @@ class Parser {
             }
         }
         
-        $data = source( $this->my_file );
         $stats_field = array();
         $stype = array(
                 "Ball Possession"  => "Ball Poss",
@@ -709,11 +699,10 @@ class Parser {
                 "Yellow Cards"     => "Yellow Cards"
             );
 
-        libxml_use_internal_errors(true);
-        $dom = new DOMDocument();
-        @$dom->loadHTML($data);
-        $dom->encoding = 'UTF-8';
-        $finder = new DomXPath($dom);
+        $dom_document = domDocument($this->my_file);
+        $dom = $dom_document->dom;
+        $finder = $dom_document->finder;
+
         $div = $finder->query("//*[contains(@id, 'tab-statistics-0-statistic')]");
 
         for ($i = 0; $i < $div->length; $i++) {

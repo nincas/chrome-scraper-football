@@ -4,8 +4,6 @@
  */
 namespace Scraper\Build\Pattern;
 
-use \DOMDocument;
-use \DomXPath;
 
 use Scraper\Kernel\Interfaces\Database as DatabaseInterface;
 
@@ -34,7 +32,6 @@ class Lineups {
 
     public function lineups(){
         $database = $this->database;
-        $data = file_get_contents( $this->my_file );
         $return = array(
             'home' => array(
                 'starting' => array(),
@@ -48,11 +45,10 @@ class Lineups {
             )
         );
 
-        libxml_use_internal_errors(true);
-        $dom = new DOMDocument();
-        $dom->loadHTML($data);
-        $dom->encoding = 'UTF-8';
-        $finder = new DomXPath($dom);
+        $dom_document = domDocument($this->my_file);
+        $dom = $dom_document->dom;
+        $finder = $dom_document->finder;
+        
         $wrappers = array(
             'lineups-wrapper',
             'missing-players-wrapper'

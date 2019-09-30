@@ -10,8 +10,6 @@ use Scraper\Build\Models\FlashscoreAlias as FlashscoreAliasModel;
 use Scraper\Build\Models\FootballCareers as FootballCareersModel;
 use Scraper\Build\Models\Participant as ParticipantModel;
 use Scraper\Build\Models\TournamentTemplate as TournamentTemplateModel;
-use \DOMDocument;
-use \DomXPath;
 
 class Career {
     private $file;
@@ -37,11 +35,9 @@ class Career {
     }
 
     public function patternCareer() {
-        $dom = new DOMDocument();
-        $dom->loadHTML($this->html);
-        $dom->encoding = 'UTF-8';
-
-        $xpath = new DomXPath($dom);
+        $dom_document = domDocument(FILE_PATH . $this->file);
+        $dom = $dom_document->dom;
+        $xpath = $dom_document->finder;
 
         $league_tables = $xpath->query("//*[contains(@id, 'league-table')]");
 

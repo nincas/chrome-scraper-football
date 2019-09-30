@@ -4,7 +4,6 @@
  */
 define('DS', DIRECTORY_SEPARATOR);
 
-
 function __env() {
     $file = finder('.env',  dirname(dirname(dirname(__DIR__))) . '/');
     if (!file_exists($file)) error('env not loaded.');
@@ -14,9 +13,10 @@ function __env() {
 
 function saveToFile($data, $file) {
     try {
-        $handle = fopen($file, 'w') or error("Cant open/create the $file");
+        file_put_contents($file, $data);
+        /*$handle = fopen($file, 'w') or error("Cant open/create the $file");
         fwrite($handle, $data);
-        fclose($handle);
+        fclose($handle);*/
         return true;
     } catch (\Exception $e) {
         error($e->getMessage());
@@ -26,7 +26,7 @@ function saveToFile($data, $file) {
 
 
 function source($file) {
-    if (!file_exists($file)) error('File cannot be read.', 1);
+    if (!file_exists($file)) error('File cannot be read. Requested: ' . $file, 1);
     if (file_exists($file)) {
         $handle = fopen($file, 'r');
         $content = fread($handle, filesize($file));
@@ -130,8 +130,6 @@ function is_boolean($string) {
 
 /**
  * chrome_kill only support windows and linux
- * 
- * 
  */
 function chrome_kill() {
     if (!KILL_CHROME) return;
@@ -152,10 +150,7 @@ function chrome_kill() {
 * Function define
 */
 function define_const(array $const) {
-    foreach ($const as $const_name => $value) {
-        define($const_name, $value);
-    }
-
+    foreach ($const as $const_name => $value) define($const_name, $value);
     is_const_defined(array_keys($const));
 }
 
@@ -163,9 +158,7 @@ function define_const(array $const) {
 * Function define checker
 */
 function is_const_defined(array $const_names) {
-    foreach ($const_names as $const_name) {
-        defined($const_name) or error("Constant '$const_name' not defined.");
-    }
+    foreach ($const_names as $const_name) defined($const_name) or error("Constant '$const_name' not defined.");
 }
 
 
@@ -243,4 +236,19 @@ function error($message, $level = 1) {
         echo NL;
         exit;
     }
+}
+
+
+function domDocument($file) {
+    libxml_use_internal_errors(true);
+    $data = source($file);
+    $dom = new \DOMDocument();
+    $dom->loadHTML($data);
+    $dom->encoding = 'UTF-8';
+    $finder = new \DomXPath($dom);
+
+    return (object) [
+        'dom' => $dom,
+        'finder' => $finder
+    ];
 }

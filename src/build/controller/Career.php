@@ -72,7 +72,6 @@ class Career implements Controller
     {
         //echo 'crawlAll' . "\n";
         $today = date('Y-m-d H:i:s');
-
         if (!empty($this->params['function_name']) && $this->params['function_name'] == 'crawlAll') {
             $active_crawl = $this->database->table('career_crawler_logs')
                 ->where('is_crawled', 'no')
@@ -122,10 +121,10 @@ class Career implements Controller
 
 
             $players = FlashscoreAliasModel::select(
-                'participantFK as player_id',
-                'fs_id',
-                'fs_alias'
-            )
+                    'participantFK as player_id',
+                    'fs_id',
+                    'fs_alias'
+                )
                 ->where('participant_type', 'athlete')
                 ->where('fs_id', '!=', null)
                 ->orderBy('id')

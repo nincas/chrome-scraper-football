@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Scraper\Kernel\App;
 
 use Scraper\Kernel\Database\Database;
@@ -47,3 +46,4 @@ class Loader {
         (new $class($this->db, $params));
     }
 }
+
